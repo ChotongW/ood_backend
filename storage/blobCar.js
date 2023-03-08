@@ -1,9 +1,13 @@
 const { BlobServiceClient } = require("@azure/storage-blob");
-const dotenv = require("dotenv");
-dotenv.config();
+const config = require("../config/env");
+// const dotenv = require("dotenv");
+// const path = require("path");
+// dotenv.config({
+//   path: path.resolve(__dirname, `${process.env.NODE_ENV}.env`),
+// });
 
-const AZURE_STORAGE_CONNECTION_STRING =
-  process.env.AZURE_STORAGE_CONNECTION_STRING;
+const AZURE_STORAGE_CONNECTION_STRING = config.AZURE_STORAGE_CONNECTION_STRING;
+
 if (!AZURE_STORAGE_CONNECTION_STRING) {
   throw Error("Azure Storage Connection string not found");
 }
