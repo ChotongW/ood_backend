@@ -1,6 +1,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const queryDB = require("../config/db");
+const db = require("../config/db");
 const upload = require("../storage/multer");
 const blob = require("../storage/blobCar");
 const userMiddleware = require("../middleware/role");
@@ -17,7 +17,7 @@ router.use(
 router.get("/", async (req, res) => {
   var sql = "SELECT * FROM vehicles WHERE availability != 0 ORDER BY brand";
   try {
-    var result = await queryDB(sql, undefined);
+    var result = await db.query(sql, undefined);
     res.send(result);
   } catch (err) {
     console.log(err);
@@ -33,7 +33,7 @@ router.get("/search", userMiddleware.isLoggedIn, async (req, res) => {
   //console.log(search);
   var sql = "SELECT * FROM vehicles WHERE brand like ? ORDER BY year DESC";
   try {
-    var result = await queryDB(sql, search);
+    var result = await db(sql, search);
     res.send(result);
   } catch (err) {
     console.log(err);
@@ -46,7 +46,7 @@ router.get("/:id", userMiddleware.isLoggedIn, async (req, res) => {
   vehicleId = req.query.vehicleId;
   var sql = "SELECT * FROM vehicles WHERE vehicle_id = ?";
   try {
-    var result = await queryDB(sql, vehicleId);
+    var result = await db(sql, vehicleId);
     res.send(result[0]);
   } catch (err) {
     console.log(err);
@@ -72,7 +72,7 @@ const doEdit = async (req, res, img_path) => {
   var sql =
     "UPDATE vehicles SET vehicle_img = ?, name = ?, brand = ?, year = ?, cost = ?, type_id = ?, description  = ?, review = ? where vehicle_id = ?";
   try {
-    var result = await queryDB(sql, [
+    var result = await db(sql, [
       img_path,
       carName,
       brand,
@@ -121,7 +121,7 @@ router.put(
     if (simpleFile == null) {
       var sql = "SELECT vehicle_img from vehicles where vehicle_id = ?";
       try {
-        var result = await queryDB(sql, vehicle_id);
+        var result = await db(sql, vehicle_id);
         //console.log(result[0].vehicle_img);
         doEdit(req, res, result[0].vehicle_img);
       } catch (err) {
@@ -208,7 +208,7 @@ router.post(
       "INSERT INTO vehicles (vehicle_id, name,  brand, year, cost, availability, type_id, vehicle_img, description, review) \
     VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     try {
-      var result = await queryDB(sql, [
+      var result = await db(sql, [
         vehicle_id,
         carName,
         brand,
@@ -240,7 +240,7 @@ router.delete("/delete", userMiddleware.isAdmin, async (req, res) => {
   }
   var sql = "DELETE FROM vehicles WHERE vehicle_id = ?";
   try {
-    var result = await queryDB(sql, vehicle_id);
+    var result = await db(sql, vehicle_id);
     res.send({ message: "Deleted vehicle already" }, 200);
   } catch (err) {
     console.log(err);
