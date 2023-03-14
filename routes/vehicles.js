@@ -37,7 +37,7 @@ class VehiclesRouter {
       this.vehiclesController.updateCar.bind(this.vehiclesController)
     );
     this.router.delete(
-      "/:car_id",
+      "/delete",
       this.vehiclesController.deleteCar.bind(this.vehiclesController)
     );
   }

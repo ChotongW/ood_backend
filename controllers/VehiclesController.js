@@ -158,13 +158,13 @@ class VehiclesController {
   }
 
   async deleteCar(req, res) {
-    let vehicleID = req.params.car_id;
+    let vehicleID = req.carId;
     try {
       let check = await this.vehiclesDMC.getVehiclesID(vehicleID);
       if (!check) {
         res.status(404).send({ error: "Car not found" });
       }
-      await this.vehiclesDMC.deleteCar(car_id);
+      await this.vehiclesDMC.deleteCar(vehicleID);
       res.status(404).send({ message: "Car deleted successfully" });
     } catch (err) {
       console.error(err);
