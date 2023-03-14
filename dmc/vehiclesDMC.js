@@ -170,21 +170,19 @@ class VehiclesDMC {
     imgURL
   ) {
     var sql =
-      "INSERT INTO vehicles (vehicle_id, name,  brand, year, availability, cost, type_id, seats, doors, gear_type, vehicle_img) \
-    VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+      "UPDATE vehicles SET vehicle_img = ?, name = ?, brand = ?, year = ?, cost = ?, type_id = ?, seats = ?, doors = ?, gear_type = ? where vehicle_id = ?";
     try {
       await db.query(sql, [
-        vehicleID,
+        imgURL,
         carName,
         brand,
         year,
-        1,
         cost,
         type_id,
         seats,
         doors,
         gear_type,
-        imgURL,
+        vehicleID,
       ]);
       let msg = { message: "update vehicle already." };
       //   console.log(msg);

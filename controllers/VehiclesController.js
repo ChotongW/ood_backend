@@ -1,6 +1,6 @@
 const VehiclesDMC = require("../dmc/vehiclesDMC");
 const BlobCarController = require("./blobCarController");
-
+const fs = require("fs");
 class VehiclesController {
   constructor() {
     this.vehiclesDMC = new VehiclesDMC();
@@ -68,6 +68,11 @@ class VehiclesController {
 
     try {
       let imgURL = await this.blobCarController.uploadBlob(imgFile);
+      fs.unlink(imgFile.path, (err) => {
+        if (err) throw err;
+        // if no error, file has been deleted successfully
+        console.log("Local file deleted!");
+      });
       // vehicle.vehicle_img = imgURL;
       let response = await this.vehiclesDMC.addCar(
         vehicleID,
