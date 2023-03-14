@@ -29,6 +29,17 @@ class VehiclesRouter {
       ),
       this.vehiclesController.addCar.bind(this.vehiclesController)
     );
+    this.router.put(
+      "/",
+      this.StorageControllerInstance.multerMiddleware.bind(
+        this.StorageControllerInstance
+      ),
+      this.vehiclesController.updateCar.bind(this.vehiclesController)
+    );
+    this.router.delete(
+      "/:car_id",
+      this.vehiclesController.deleteCar.bind(this.vehiclesController)
+    );
   }
 
   getRouter() {
