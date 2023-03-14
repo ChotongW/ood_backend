@@ -22,6 +22,24 @@ class VehiclesController {
     }
   }
 
+  async getVehicleByID(req, res) {
+    let vehicleID = req.params.carId;
+    // console.log(vehicleID);
+    let result = await this.vehiclesDMC.getVehiclesByID(vehicleID);
+
+    if (result instanceof Error) {
+      res.send(result, 500);
+      return;
+    } else if (result.length === 0) {
+      res.send({ msg: "no data found" }, 200);
+      return;
+    } else {
+      //   console.log(result.length);
+      res.send(result, 200);
+      return;
+    }
+  }
+
   async getVehiclesSearch(req, res) {
     let brand = req.query.brand;
     let result = await this.vehiclesDMC.getVehiclesSearch(brand);
@@ -160,12 +178,12 @@ class VehiclesController {
   async deleteCar(req, res) {
     let vehicleID = req.carId;
     try {
-      let check = await this.vehiclesDMC.getVehiclesID(vehicleID);
+      let check = await this.vehiclesDMC.getVehiclesByID(vehicleID);
       if (!check) {
         res.status(404).send({ error: "Car not found" });
       }
       await this.vehiclesDMC.deleteCar(vehicleID);
-      res.status(404).send({ message: "Car deleted successfully" });
+      res.status(200).send({ message: "Car deleted successfully" });
     } catch (err) {
       console.error(err);
       res.status(500).send({ error: "Server error" });

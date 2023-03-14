@@ -75,14 +75,14 @@ class VehiclesDMC {
     }
   }
 
-  async getVehiclesID(vehicleID) {
-    let sql = "SELECT vehicle_id FROM vehicles WHERE vehicle_id = ?";
+  async getVehiclesByID(vehicleID) {
+    let sql = "SELECT * FROM vehicles WHERE vehicle_id = ?";
     try {
       let result = await db.query(sql, vehicleID);
       // if success does below
-      //console.log(result);
-      let vehicle_id = result[0].vehicle_id;
-      return vehicle_id;
+      // console.log(result);
+      // let vehicle_id = result[0].vehicle_id;
+      return result;
     } catch (err) {
       console.log(err);
       //   res.send(500, { message: err });
@@ -145,11 +145,12 @@ class VehiclesDMC {
   }
 
   async deleteCar(vehicleID) {
-    var sql = "SELECT cost from vehicles where vehicle_id = ?";
+    let sql = "DELETE FROM vehicles WHERE vehicle_id = ?";
     try {
-      let result = await db.query(sql, vehicleID);
-      let vehicle_cost = result[0].cost;
-      return vehicle_cost;
+      await db.query(sql, vehicleID);
+      let msg = { message: "Car deleted successfully." };
+      //   console.log(msg);
+      return msg;
     } catch (err) {
       console.log(err);
       //   res.send(err, 500);

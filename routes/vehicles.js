@@ -19,6 +19,10 @@ class VehiclesRouter {
       this.vehiclesController.getAllVehicles.bind(this.vehiclesController)
     );
     this.router.get(
+      "/:carId",
+      this.vehiclesController.getVehicleByID.bind(this.vehiclesController)
+    );
+    this.router.get(
       "/search",
       this.vehiclesController.getVehiclesSearch.bind(this.vehiclesController)
     );
