@@ -7,7 +7,10 @@ const book = require("./routes/booking");
 const payment = require("./routes/payment");
 const user = require("./routes/user");
 const insurance = require("./routes/insurance");
-const db = require("./config/db");
+const reservation = require("./routes/reservation");
+
+const vehicles = require("./routes/vehicles");
+
 const port = process.env.PORT || 5500;
 
 const cors = require("cors");
@@ -23,11 +26,13 @@ app.use(
     extended: true,
   })
 );
-
-app.use("/vehicle", index);
+const vehiclesRouter = new vehicles();
+app.use("/vehicle", vehiclesRouter.getRouter());
 app.use("/test", test);
 app.use("/authen", authen);
-app.use("/booking", book);
+
+const reservationRouter = new reservation();
+app.use("/booking", reservationRouter.getRouter());
 app.use("/payment", payment.router);
 app.use("/user", user);
 app.use("/insurance", insurance);

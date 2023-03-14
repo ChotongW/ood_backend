@@ -1,10 +1,11 @@
 const { BlobServiceClient } = require("@azure/storage-blob");
-const config = require("../config/env");
+// const config = require("../config/env");
 
-class AzureBlobStorage {
+class BlobCarController {
   constructor() {
     const AZURE_STORAGE_CONNECTION_STRING =
-      config.AZURE_STORAGE_CONNECTION_STRING;
+      "DefaultEndpointsProtocol=https;AccountName=carleasing;AccountKey=EqpKjvElpsTWcu5F/W6GB8o4JR3Nxd0anXJf1UuCTA3m8hfA9S3E5DJEmHDMIm5Po4+xz0YkAAEl+AStdPhsOg==;EndpointSuffix=core.windows.net";
+    //   config.AZURE_STORAGE_CONNECTION_STRING;
 
     if (!AZURE_STORAGE_CONNECTION_STRING) {
       throw Error("Azure Storage Connection string not found");
@@ -19,6 +20,8 @@ class AzureBlobStorage {
     this.containerClient = this.blobServiceClient.getContainerClient(
       this.containerName
     );
+
+    this.uploadBlob = this.uploadBlob.bind(this);
   }
 
   async uploadBlob(simpleFile) {
@@ -33,4 +36,4 @@ class AzureBlobStorage {
   }
 }
 
-module.exports = AzureBlobStorage;
+module.exports = BlobCarController;
