@@ -1,6 +1,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const queryDB = require("../config/db");
+const db = require("../config/db");
 const userMiddleware = require("../middleware/role");
 const payment = require("../routes/payment");
 var uuid = require("uuid");
@@ -14,9 +14,9 @@ router.use(
 );
 
 router.get("/", userMiddleware.isLoggedIn, async (req, res) => {
-  var sql = "SELECT * FROM insurance ORDER BY class";
+  var sql = "SELECT * FROM package";
   try {
-    var result = await queryDB(sql, undefined);
+    var result = await db.query(sql, undefined);
     res.send(result);
   } catch (err) {
     console.log(err);
@@ -26,9 +26,9 @@ router.get("/", userMiddleware.isLoggedIn, async (req, res) => {
 });
 
 router.get("/admin", userMiddleware.isAdmin, async (req, res) => {
-  var sql = "SELECT * FROM insurance ORDER BY class";
+  var sql = "SELECT * FROM package";
   try {
-    var result = await queryDB(sql, undefined);
+    var result = await db.query(sql, undefined);
     res.send(result);
   } catch (err) {
     console.log(err);
@@ -59,7 +59,7 @@ router.post("/admin/add", userMiddleware.isAdmin, async (req, res) => {
     "INSERT INTO insurance (in_id, name,  info, class, cost) \
   VALUES(?, ?, ?, ?, ?)";
   try {
-    var result = await queryDB(sql, [id, name, info, insu_class, cost]);
+    var result = await db.query(sql, [id, name, info, insu_class, cost]);
     res.send(201, { response: "Created insurance already" });
   } catch (err) {
     console.log(err);
@@ -88,7 +88,7 @@ router.put("/admin/edit", userMiddleware.isAdmin, async (req, res) => {
   var sql =
     "UPDATE insurance SET name = ?, info = ?, class = ?, cost = ? where in_id = ?";
   try {
-    var result = await queryDB(sql, [name, info, insu_class, cost, id]);
+    var result = await db.query(sql, [name, info, insu_class, cost, id]);
     res.send(200, { message: "update insurance already" });
   } catch (err) {
     console.log(err);
@@ -111,7 +111,7 @@ router.delete("/admin/delete", userMiddleware.isAdmin, async (req, res) => {
   }
   var sql = "DELETE FROM insurance WHERE in_id = ?";
   try {
-    var result = await queryDB(sql, id);
+    var result = await db.query(sql, id);
     res.send({ message: "Deleted insurance already" }, 200);
   } catch (err) {
     console.log(err);

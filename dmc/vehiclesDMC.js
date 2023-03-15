@@ -1,6 +1,4 @@
 const db = require("../config/db");
-const { deleteCar } = require("./Vehicle");
-
 class VehiclesDMC {
   async getAllVehicles() {
     let sql = "SELECT * FROM vehicles WHERE availability != 0 ORDER BY brand";

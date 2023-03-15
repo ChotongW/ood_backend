@@ -1,6 +1,7 @@
 // middleware/users.js
 const jwt = require("jsonwebtoken");
-const queryDB = require("../config/db");
+const config = require("../config/env.js");
+const db = require("../config/db");
 
 module.exports = {
   validateRegister: (req, res, next) => {
@@ -33,7 +34,7 @@ module.exports = {
   isLoggedIn: (req, res, next) => {
     try {
       const token = req.headers.authorization.split(" ")[1];
-      const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+      const decoded = jwt.verify(token, config.ACCESS_TOKEN_SECRET);
       //   console.log(token);
       //   console.log(decoded);
       req.userData = decoded;
@@ -48,12 +49,12 @@ module.exports = {
   isAdmin: async (req, res, next) => {
     try {
       const token = req.headers.authorization.split(" ")[1];
-      const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+      const decoded = jwt.verify(token, config.ACCESS_TOKEN_SECRET);
       //   console.log(token);
       //console.log(decoded);
       var sql = "SELECT id_no FROM admin WHERE id_no = ?";
       try {
-        var result = await queryDB(sql, decoded.id);
+        var result = await db.query(sql, decoded.id);
         if (result.length === 0) {
           return res.status(401).send({
             msg: "Restricted access denied",

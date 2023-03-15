@@ -1,6 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const queryDB = require("../config/db");
+// const queryDB = require("../config/db");
+const db = require("../config/db");
 const userMiddleware = require("../middleware/role");
 const payment = require("../routes/payment");
 var uuid = require("uuid");
@@ -23,9 +24,9 @@ const doReturnProfile = async (id, userProf, res) => {
     return;
   }
 
-  var sql = "SELECT end_date FROM booking where book_id = ?";
+  var sql = "SELECT end_date FROM reservation where book_id = ?";
   try {
-    var result = await queryDB(sql, book_id);
+    var result = await db.query(sql, book_id);
     if (result.length === 0) {
       userProf["daylefts"] = null;
       //res.status(200).send(userProf);
@@ -45,9 +46,9 @@ const doReturnProfile = async (id, userProf, res) => {
     return;
   }
 
-  var sql = "SELECT status FROM booking where book_id = ?";
+  var sql = "SELECT status FROM reservation where book_id = ?";
   try {
-    var result = await queryDB(sql, book_id);
+    var result = await db.query(sql, book_id);
     let status = result[0].status;
     //console.log(status);
     //let book_id = result[0].book_id;
@@ -70,7 +71,7 @@ router.get("/profile", userMiddleware.isLoggedIn, async (req, res) => {
 
   var sql = "SELECT * FROM customer where id_no = ?";
   try {
-    var result = await queryDB(sql, id);
+    var result = await db.query(sql, id);
     if (result[0] === undefined) {
       res.send(
         {
@@ -80,7 +81,8 @@ router.get("/profile", userMiddleware.isLoggedIn, async (req, res) => {
       );
       return;
     }
-    doReturnProfile(id, result[0], res);
+    // doReturnProfile(id, result[0], res);
+    res.send(result[0]);
   } catch (err) {
     console.log(err);
     res.send(500, { message: err });
@@ -93,7 +95,7 @@ router.get("/payment", userMiddleware.isLoggedIn, async (req, res) => {
 
   var sql = "SELECT book_id FROM customer where id_no = ?";
   try {
-    var result = await queryDB(sql, id);
+    var result = await db.query(sql, id);
     if (result.length == 0) {
       res.send({ message: "No book found." }, 400);
       return;
@@ -109,9 +111,9 @@ router.get("/payment", userMiddleware.isLoggedIn, async (req, res) => {
     return;
   }
 
-  var sql = "SELECT vehicle_id FROM booking where book_id = ?";
+  var sql = "SELECT vehicle_id FROM reservation where book_id = ?";
   try {
-    var result2 = await queryDB(sql, book_id);
+    var result2 = await db.query(sql, book_id);
     var vehicle_id = result2[0].vehicle_id;
   } catch (err) {
     console.log(err);
@@ -121,7 +123,7 @@ router.get("/payment", userMiddleware.isLoggedIn, async (req, res) => {
 
   var sql = "SELECT * FROM billing where book_id = ?";
   try {
-    var result3 = await queryDB(sql, book_id);
+    var result3 = await db.query(sql, book_id);
     result3[0]["vehicle_id"] = vehicle_id;
     res.send(result3);
   } catch (err) {
@@ -134,14 +136,19 @@ router.get("/payment", userMiddleware.isLoggedIn, async (req, res) => {
 router.get("/booking", userMiddleware.isLoggedIn, async (req, res) => {
   let id = req.userData.id;
 
-  var sql = "SELECT book_id FROM customer where id_no = ?";
+  // var sql = "SELECT * FROM reservation where id_no = ? and status != ?";
+  var sql =
+    "SELECT * FROM reservation INNER JOIN vehicles \
+    ON reservation.vehicle_id = vehicles.vehicle_id  where id_no = ? and status != ?";
   try {
-    var result = await queryDB(sql, id);
+    var result = await db.query(sql, [id, "finished"]);
     if (result.length == 0 || result[0].book_id == null) {
       res.send(200, { message: "No book found." });
       return;
     }
-    var book_id = result[0].book_id;
+    // var book_list = result.book_id;
+    res.send(result);
+    return;
     // console.log(result);
     // console.log(book_id, id);
   } catch (err) {
@@ -150,33 +157,33 @@ router.get("/booking", userMiddleware.isLoggedIn, async (req, res) => {
     return;
   }
 
-  var sql =
-    "SELECT book_id, vehicle_id, in_id, status FROM booking where book_id = ?";
-  try {
-    var booking = await queryDB(sql, book_id);
-    //res.send(result2);
-    var vehicle_id = booking[0].vehicle_id;
-  } catch (err) {
-    console.log(err);
-    res.send(500, { message: err });
-    return;
-  }
+  // var sql =
+  //   "SELECT book_id, vehicle_id, in_id, status FROM reservation where book_id = ?";
+  // try {
+  //   var booking = await db.query(sql, book_id);
+  //   //res.send(result2);
+  //   var vehicle_id = booking[0].vehicle_id;
+  // } catch (err) {
+  //   console.log(err);
+  //   res.send(500, { message: err });
+  //   return;
+  // }
 
-  var sql =
-    "SELECT name, brand, vehicle_img, cost FROM vehicles where vehicle_id = ?";
-  try {
-    var carDetail = await queryDB(sql, vehicle_id);
-    booking[0]["vehicle_img"] = carDetail[0].vehicle_img;
-    booking[0]["model_name"] = carDetail[0].name;
-    booking[0]["brand"] = carDetail[0].brand;
-    booking[0]["cost"] = carDetail[0].cost;
+  // var sql =
+  //   "SELECT name, brand, vehicle_img, cost FROM vehicles where vehicle_id = ?";
+  // try {
+  //   var carDetail = await db.query(sql, vehicle_id);
+  //   booking[0]["vehicle_img"] = carDetail[0].vehicle_img;
+  //   booking[0]["model_name"] = carDetail[0].name;
+  //   booking[0]["brand"] = carDetail[0].brand;
+  //   booking[0]["cost"] = carDetail[0].cost;
 
-    res.send(booking);
-  } catch (err) {
-    console.log(err);
-    res.send(500, { message: err });
-    return;
-  }
+  //   res.send(booking);
+  // } catch (err) {
+  //   console.log(err);
+  //   res.send(500, { message: err });
+  //   return;
+  // }
 });
 
 router.put("/edit", userMiddleware.isLoggedIn, async (req, res) => {
@@ -199,7 +206,7 @@ router.put("/edit", userMiddleware.isLoggedIn, async (req, res) => {
   var sql =
     "UPDATE customer SET fname = ?, lname = ?, phone = ? where id_no = ?";
   try {
-    var result2 = await queryDB(sql, [fname, lname, phone, id]);
+    var result2 = await db.query(sql, [fname, lname, phone, id]);
     res.send({ message: "update profile already" });
   } catch (err) {
     console.log(err);

@@ -25,7 +25,7 @@ class ReservationController {
       return;
     }
     let packageCost = await this.reservationDMC.getPackageCost(packageID);
-    let vehicleCost = await this.reservationDMC.getVehicleCost(vehicleID);
+    let vehicleCost = await this.vehiclesController.getVehicleCost(vehicleID);
 
     if (packageCost instanceof Error) {
       res.send(packageCost.message, 500);
@@ -60,14 +60,14 @@ class ReservationController {
     // let amount_balance = parseInt(req.body.amount_balance, 10);
     // let tax_amount = parseInt(req.body.tax_amount, 10);
     // let total_amount = parseInt(req.body.total_amount, 10);
-    // let id_no = req.userData.id;
-    let id_no = req.body.id;
+    let id_no = req.userData.id;
+    // let id_no = req.body.id;
     let vehicleID = req.body.carId;
     let packageID = req.body.packageID;
     let start_date = req.body.bookDate;
     let end_date = req.body.returnDate;
 
-    let availability = await this.reservationDMC.getVehiclesAval(vehicleID);
+    let availability = await this.vehiclesController.getVehiclesAval(vehicleID);
     if (availability instanceof Error) {
       res.send(availability.message, 500);
       return;
@@ -77,7 +77,7 @@ class ReservationController {
     }
 
     let packageCost = await this.reservationDMC.getPackageCost(packageID);
-    let vehicleCost = await this.reservationDMC.getVehicleCost(vehicleID);
+    let vehicleCost = await this.vehiclesController.getVehicleCost(vehicleID);
     if (packageCost instanceof Error) {
       res.send(packageCost.message, 500);
       return;
@@ -143,8 +143,8 @@ class ReservationController {
     let start_date = req.body.bookDate;
     let end_date = req.body.returnDate;
     let packageID = req.body.packageID;
-    // let id_no = req.userData.id;
-    let id_no = req.body.id;
+    let id_no = req.userData.id;
+    // let id_no = req.body.id;
     var id = uuid.v4();
 
     if (packageID === "") {

@@ -1,6 +1,5 @@
 const mysql = require("mysql");
 const util = require("util");
-const fs = require("fs");
 const config = require("./env.js");
 // const path = require("path");
 // const dotenv = require("dotenv");

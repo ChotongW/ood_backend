@@ -1,9 +1,10 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const queryDB = require("../config/db");
+const db = require("../config/db");
 const userMiddleware = require("../middleware/role");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const config = require("../config/env.js");
 
 router = express.Router();
 router.use(express.json());
@@ -33,7 +34,14 @@ const doSignUp = (req, res) => {
       var sql =
         "INSERT INTO customer (id_no, fname, lname, email, password, phone ) VALUES (?, ?, ?, ?, ?, ?)";
       try {
-        var result = await queryDB(sql, [id, fname, lname, email, hash, phone]);
+        var result = await db.query(sql, [
+          id,
+          fname,
+          lname,
+          email,
+          hash,
+          phone,
+        ]);
         return res.status(201).send({
           msg: "Registered!",
         });
@@ -68,7 +76,7 @@ function verify(result, password, res) {
         {
           id: id,
         },
-        process.env.ACCESS_TOKEN_SECRET,
+        config.ACCESS_TOKEN_SECRET,
         {
           expiresIn: 3600,
         }
@@ -94,7 +102,7 @@ router.post(
 
     var sql = "SELECT * FROM customer WHERE LOWER(email) = ?";
     try {
-      var result = await queryDB(sql, email);
+      var result = await db.query(sql, email);
       if (result.length) {
         return res.status(409).send({
           msg: "This email is already in use!",
@@ -118,7 +126,7 @@ router.post("/login", async (req, res) => {
 
   var sql = "SELECT password,id_no FROM customer WHERE LOWER(email) = ?";
   try {
-    var result = await queryDB(sql, email);
+    var result = await db.query(sql, email);
     if (!result.length) {
       return res.status(401).send({
         msg: "Username or password is incorrect!",
@@ -139,7 +147,7 @@ router.post("/admin/login", async (req, res) => {
 
   var sql = "SELECT password,id_no FROM admin WHERE LOWER(email) = ?";
   try {
-    var result = await queryDB(sql, email);
+    var result = await db.query(sql, email);
     if (!result.length) {
       return res.status(401).send({
         msg: "Username or password is incorrect!",

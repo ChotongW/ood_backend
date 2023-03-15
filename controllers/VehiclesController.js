@@ -35,7 +35,7 @@ class VehiclesController {
       return;
     } else {
       //   console.log(result.length);
-      res.send(result, 200);
+      res.send(result[0], 200);
       return;
     }
   }
@@ -55,6 +55,19 @@ class VehiclesController {
       return;
     }
   }
+
+  async getVehicleCost(vehicleID) {
+    let result = await this.vehiclesDMC.getVehicleCost(vehicleID);
+
+    return result;
+  }
+
+  async getVehiclesAval(vehicleID) {
+    let result = await this.vehiclesDMC.getVehiclesAval(vehicleID);
+
+    return result;
+  }
+
   async setAval(vehicleID) {
     let result = await this.vehiclesDMC.setAval(vehicleID);
     if (result instanceof Error) {

@@ -2,6 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const VehiclesController = require("../controllers/VehiclesController");
 const StorageController = require("../controllers/storageController");
+const userMiddleware = require("../middleware/role");
 
 class VehiclesRouter {
   constructor() {
@@ -28,6 +29,7 @@ class VehiclesRouter {
     );
     this.router.post(
       "/",
+      userMiddleware.isAdmin,
       this.StorageControllerInstance.multerMiddleware.bind(
         this.StorageControllerInstance
       ),
@@ -35,6 +37,7 @@ class VehiclesRouter {
     );
     this.router.put(
       "/",
+      userMiddleware.isAdmin,
       this.StorageControllerInstance.multerMiddleware.bind(
         this.StorageControllerInstance
       ),
@@ -42,6 +45,7 @@ class VehiclesRouter {
     );
     this.router.delete(
       "/delete",
+      userMiddleware.isAdmin,
       this.vehiclesController.deleteCar.bind(this.vehiclesController)
     );
   }

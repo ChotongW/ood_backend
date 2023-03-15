@@ -1,7 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const ReservationController = require("../controllers/ReservationController");
-
+const userMiddleware = require("../middleware/role");
 class ReservationRouter {
   constructor() {
     this.router = express.Router();
@@ -14,10 +14,12 @@ class ReservationRouter {
   initRoutes() {
     this.router.get(
       "/summary",
+      userMiddleware.isLoggedIn,
       this.reservationController.getSummary.bind(this.reservationController)
     );
     this.router.post(
       "/book",
+      userMiddleware.isLoggedIn,
       this.reservationController.handleBooking.bind(this.reservationController)
     );
   }
