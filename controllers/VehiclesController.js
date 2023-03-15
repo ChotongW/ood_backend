@@ -140,6 +140,11 @@ class VehiclesController {
     } else {
       try {
         let imgURL = await this.blobCarController.uploadBlob(imgFile);
+        fs.unlink(imgFile.path, (err) => {
+          if (err) throw err;
+          // if no error, file has been deleted successfully
+          console.log("Local file deleted!");
+        });
         let response = this.doEdit(req, imgURL, vehicleID);
 
         if (response instanceof Error) {
