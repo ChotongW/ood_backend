@@ -124,8 +124,19 @@ class VehiclesController {
     let imgFile = req.file;
 
     if (imgFile == null) {
-      let imgURL = await this.vehiclesDMC.getVehiclesImg(vehicleID);
-      this.doEdit(req, imgURL, vehicleID);
+      try {
+        let imgURL = await this.vehiclesDMC.getVehiclesImg(vehicleID);
+        let response = this.doEdit(req, imgURL, vehicleID);
+        if (response instanceof Error) {
+          res.send(response, 500);
+        } else {
+          //   console.log(response.length);
+          res.send(response, 200);
+        }
+      } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Server error" });
+      }
     } else {
       try {
         let imgURL = await this.blobCarController.uploadBlob(imgFile);
