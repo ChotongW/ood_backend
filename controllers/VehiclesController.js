@@ -145,14 +145,16 @@ class VehiclesController {
   }
 
   async doEdit(req, imgURL, vehicleID) {
-    let carName = req.body.carName;
-    let brand = req.body.brand;
-    let year = req.body.year;
-    let cost = parseInt(req.body.cost);
-    let type_id = parseInt(req.body.type_id);
+    let carModel = req.body.carName;
+
+    let cost = parseInt(req.body.price);
+    let type_id = parseInt(req.body.typeId);
     let seats = req.body.seats;
     let doors = req.body.doors;
     let gear_type = req.body.gear_type;
+    let brand = carModel.split(" ")[0];
+    let carName = carModel.split(" ")[1];
+    let year = carModel.split(" ")[2];
 
     try {
       let response = await this.vehiclesDMC.updateCar(
@@ -176,7 +178,8 @@ class VehiclesController {
   }
 
   async deleteCar(req, res) {
-    let vehicleID = req.carId;
+    let vehicleID = req.body.carId;
+    console.log(vehicleID);
     try {
       let check = await this.vehiclesDMC.getVehiclesByID(vehicleID);
       if (!check) {
